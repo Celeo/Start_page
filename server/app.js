@@ -3,15 +3,21 @@ import cors from 'cors'
 import request from 'request'
 import moment from 'moment'
 
-import config from './config.js'
-
 
 const app = express()
 app.use(cors())
 
 app.get('/weather', (req, res) => {
-  const url = 'https://api.darksky.net/forecast/' + config.weather.token + '/' + config.weather.location
-  console.log('Querying "' + url + '" for data ...')
+  const token = req.query.token
+  const location = req.query.location
+  if (token == undefined || location == undefined) {
+    res.send(JSON.stringify({
+      data: null,
+      message: 'Missing parameters `token` and/or `location`'
+    }))
+    return
+  }
+  const url = 'https://api.darksky.net/forecast/' + token + '/' + location
 
   request(url, (error, response, body) => {
     if (!error && response.statusCode == 200) {

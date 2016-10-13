@@ -56,17 +56,16 @@ export default {
       if (stored != null && stored != undefined) {
         console.log('Loaded weather from localStorage')
         stored = JSON.parse(stored)
-        let loaded = moment(stored.loaded)
+        const loaded = moment(stored.loaded)
         if (moment().diff(loaded) < 600000) {
           console.log('Weather information from cache is still valid')
           this.weather = stored
           return
-        } else
-          console.log('Weather information from cache is old')
+        }
       }
       console.log('Getting new weather information from server ...')
-      this.$http.get('http://localhost:3000/weather').then((response) => {
-        console.log('Got response from server: ' + response.data)
+      this.$http.get('http://localhost:3000/weather?token='
+        + config.weather.token + '&location=' + config.weather.location).then((response) => {
         const weatherData = JSON.parse(response.data).data
         this.weather = weatherData
         localStorage.setItem('weather', JSON.stringify(weatherData))
