@@ -10,7 +10,6 @@
         span.weather {{ weather.temp }}&deg;F 
         span and 
         span.weather {{ weather.sky_now }} 
-        span in Poway, CA
         br
         span The wind is 
         span.weather {{ weather.wind_speed }} mph 
