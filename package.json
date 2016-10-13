@@ -6,8 +6,8 @@
   "scripts": {
     "dev": "webpack-dev-server --open --inline --hot",
     "build": "cross-env NODE_ENV=production webpack --progress --hide-modules",
-    "dev_server": "nodemon server/app.js --exec babel-node --presets es2015",
-    "build_server": "babel server/app.js -o dist/server.js --presets es2015"
+    "dev_server": "nodemon server/server.js --exec babel-node --presets es2015",
+    "build_server": "babel server/server.js -d dist --presets es2015"
   },
   "dependencies": {
     "cors": "^2.8.1",

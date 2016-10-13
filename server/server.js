@@ -29,12 +29,12 @@ app.get('/weather', (req, res) => {
       const currently = data.currently
       const today = data.daily.data[0]
       const display = {
-        wind_speed: currently.windSpeed,
-        wind_direction: currently.windBearing,
-        humidity: currently.humidity * 100,
+        wind_speed: parseInt(currently.windSpeed),
+        wind_direction: parseInt(currently.windBearing),
+        humidity: parseInt(currently.humidity * 100),
         sky_now: currently.summary,
-        temp: currently.temperature,
-        high: today.temperatureMax,
+        temp: parseInt(currently.temperature),
+        high: parseInt(today.temperatureMax),
         high_time: moment.unix(today.temperatureMaxTime).valueOf(),
         sky_today: today.summary.toLowerCase(),
         loaded: moment().valueOf()
