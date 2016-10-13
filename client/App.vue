@@ -7,21 +7,25 @@
     div.text-center.pad-top.weather-container
       h4(v-if="weather")
         span It is 
-        span.weather {{ weather.temp }}&deg;F 
+        span.highlight {{ weather.temp }}&deg;F 
         span and 
-        span.weather {{ weather.sky_now }} 
+        span.highlight {{ weather.sky_now }} 
         br
         span The wind is 
-        span.weather {{ weather.wind_speed }} mph 
+        span.highlight {{ weather.wind_speed }} mph 
         span and the humidity is 
-        span.weather {{ weather.humidity }}%
+        span.highlight {{ weather.humidity }}%
         br
         span Today 
         span(v-if="is_afternoon") was to be 
         span(v-else) will be 
-        span.weather {{ weather.high }}&deg;F 
+        span.highlight {{ weather.high }}&deg;F 
         span and 
-        span.weather {{ weather.sky_today }}
+        span.highlight {{ weather.sky_today }}
+    div.text-center.pad-top.travel-container
+      h4(v-if="travel_time")
+        span.highlight {{ travel_time }} 
+        span to {{ travel_destination }}
 </template>
 
 <script>
@@ -33,7 +37,9 @@ export default {
   data() {
     return {
       time: moment(),
-      weather: null
+      weather: null,
+      travel_time: null,
+      travel_destination: config.travel.end_name
     }
   },
   computed: {
@@ -57,20 +63,45 @@ export default {
         console.log('Loaded weather from localStorage')
         stored = JSON.parse(stored)
         const loaded = moment(stored.loaded)
-        if (moment().diff(loaded) < 600000) {
+        if (this.time.diff(loaded) < 600000) {
           console.log('Weather information from cache is still valid')
           this.weather = stored
           return
         }
       }
       console.log('Getting new weather information from server ...')
-      this.$http.get('http://localhost:3000/weather?token='
-        + config.weather.token + '&location=' + config.weather.location).then((response) => {
+      this.$http.get(encodeURI('http://localhost:3000/weather?token='
+          + config.weather.token + '&location=' + config.weather.location)).then((response) => {
         const weatherData = JSON.parse(response.data).data
         this.weather = weatherData
         localStorage.setItem('weather', JSON.stringify(weatherData))
       }, (response) => {
-        console.log('Error response from server: ' + JSON.stringify(response))
+        console.log('Error response from server for weather: ' + JSON.stringify(response))
+      })
+    },
+    loadTravel() {
+      let stored = localStorage.getItem('travel')
+      if (stored != null && stored != undefined) {
+        console.log('Loaded travel from localStorage')
+        stored = JSON.parse(stored)
+        const loaded = moment(stored.loaded)
+        if (this.time.diff(loaded) < 300000) {
+          console.log('Travel information from cache is still valid')
+          this.travel_time = stored.time
+          return
+        }
+      }
+      console.log('Getting new travel information from server ...')
+      this.$http.get(encodeURI('http://localhost:3000/travel?'
+          + 'start=' + config.travel.start
+          + '&end=' + config.travel.end
+          + '&traffic_model=' + config.travel.traffic_model
+          + '&units=' + config.travel.units)).then((response) => {
+        const travelData = JSON.parse(response.data).data
+        this.travel_time = travelData.time
+        localStorage.setItem('travel', JSON.stringify(travelData))
+      }, (response) => {
+        console.log('Error response from server for travel: ' + JSON.stringify(response))
       })
     }
   },
@@ -78,6 +109,8 @@ export default {
     setInterval(() => this.time = moment(), 1000)
     setInterval(() => this.loadWeather(), 600000)
     this.loadWeather()
+    if (this.time.hour() > 15)
+      this.loadTravel()
   }
 }
 </script>
@@ -117,12 +150,14 @@ export default {
     position relative
     top: 0.2em
 
-  .pad-top
-      padding-top 10em
-
-  .weather
+  .highlight
     color rgb(220 149 15)
 
   .weather-container
+    padding-top 10em
     animation fadein 2s
+
+  .travel-container
+    padding-top 2em
+    animation fadein 4s
 </style>
