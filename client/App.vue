@@ -26,7 +26,7 @@
 
 <script>
 import moment from 'moment'
-import config from '../config.js'
+import config from './config.js'
 
 
 export default {
