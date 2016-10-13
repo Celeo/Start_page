@@ -1,4 +1,5 @@
 import express from 'express'
+import cors from 'cors'
 import request from 'request'
 import moment from 'moment'
 
@@ -6,12 +7,7 @@ import config from './config.js'
 
 
 const app = express()
-
-app.all('/', function(req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*")
-  res.header("Access-Control-Allow-Headers", "X-Requested-With")
-  next()
- })
+app.use(cors())
 
 app.get('/weather', (req, res) => {
   const url = 'https://api.darksky.net/forecast/' + config.weather.token + '/' + config.weather.location
