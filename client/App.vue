@@ -63,8 +63,8 @@ export default {
         console.log('Loaded weather from localStorage')
         stored = JSON.parse(stored)
         const loaded = moment(stored.loaded)
-        if (this.time.diff(loaded) < 600000) {
-          console.log('Weather information from cache is still valid')
+        if (this.time.diff(loaded) < 1800000) {
+          console.log('Weather information from cache is still valid (less than 30 minutes old)')
           this.weather = stored
           return
         }
@@ -86,7 +86,7 @@ export default {
         stored = JSON.parse(stored)
         const loaded = moment(stored.loaded)
         if (this.time.diff(loaded) < 300000) {
-          console.log('Travel information from cache is still valid')
+          console.log('Travel information from cache is still valid (less than 5 minutes old)')
           this.travel_time = stored.time
           return
         }
