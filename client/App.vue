@@ -53,7 +53,7 @@ export default {
       return this.time.format('MMM DD')
     },
     is_afternoon() {
-      return this.time.hour() > 15
+      return this.time.hour() >= 15
     }
   },
   methods: {
